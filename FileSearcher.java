@@ -1,89 +1,75 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 
 
 public class FileSearcher 
 {
-	
-	
-	/**
-	 * @param args
-	 * @throws FileNotFoundException 
-	 */
-	ArrayList <String> words;
-	ArrayList <String> fileContent;
-	ArrayList <String> fileNames;
-	public static void main(String[] args) throws IOException 
-	{
-		FileSearcher filesearch1=new FileSearcher();
-		filesearch1.addFiles("file1.txt");
-		filesearch1.addFiles("file2.txt");
-		filesearch1.addWords();
-		for (int j=0;j<filesearch1.fileContent.size();j++)
-		{
-			int times = filesearch1.checkIfWordIsInFiles(j);
-			if (times!=0)
-			{
-				System.out.println(filesearch1.fileNames.get(j));
-				System.out.println(times);
-			}
-			
-		}
+	ArrayList <String> words;  		// list of words to search for
+	ArrayList <FileObject> files;	// list of FileObjects
 
-	}
-
-	private FileSearcher() throws FileNotFoundException
+	public FileSearcher() throws IOException		// Constructor for filesearcher - puts files into it
 	{
-		fileContent= new ArrayList<String>();		
-		fileNames = new ArrayList<String>();
-		words= new  ArrayList<String>();
-	}
-	
-	private void addFiles(String fileLocationString) throws IOException
-	{
-		fileNames.add(fileLocationString);
-		FileInputStream file= new FileInputStream(fileLocationString);
-	
-		BufferedReader in=new BufferedReader(new InputStreamReader(file));
-		String str;
-		String fileString="";
-		while ((str=in.readLine())!=null)
-		{
-			fileString=fileString+ " "+ str;				
-		}
-		
-		fileContent.add(fileString);
+		files=new ArrayList<FileObject>();
+		FileObject file=new FileObject("file1.txt");
+		files.add(file);
+		file=new FileObject("file2.txt");
+		files.add(file);
 	}
 	
-	private void addWords() 
+	
+	private void addWords() 						// Adds words to the words arrayList
 	{
+		words=new ArrayList<String>();
 		words.add("thanks");
 		words.add("you");
 		words.add("Im");
+		words.add("how");
 	}
-	
-	private int checkIfWordIsInFiles(int j)
+
+	public static void main(String[] args) throws IOException 
 	{
-		int times=0;
-		for(int i=0; i<words.size();i++)
+		FileSearcher fileSearch1=new FileSearcher();	// Initialises new FileSearcher
+		
+		fileSearch1.addWords();							// Runs the add words method
+		for (int j=0;j<fileSearch1.files.size();j++)	// calls the checkIfWordIsInFiles method for each file
 		{
-			
-			if (fileContent.get(j).contains(words.get(i)))
-			{
-				times++;
-			}
+			fileSearch1.checkIfWordIsInFiles(j);
 		}
 		
-		return times;
+		fileSearch1.sortFileObjects();
+		fileSearch1.printResults();
+		
+	}
+
+	
+	
+	private void checkIfWordIsInFiles(int j)
+	{
+		for (int i=0;i<words.size();i++)
+		{
+			files.get(j).checkWord(words.get(i));		// Checks if the word is in this file
+		}
+		
+		
+	}
+
+	private void sortFileObjects()
+	{
+		if(files.get(0).numberOfWords < files.get(1).numberOfWords)
+		{	
+			FileObject spare=files.get(0);
+			files.set(0, files.get(1));
+			files.set(1, spare);
+		}
 	}
 	
-	
-	
+	private void printResults()
+	{
+		for (int j=0;j<files.size();j++)
+		{
+			// Prints out file name and number of words
+			System.out.println (files.get(j).fileLocation +" has "+ files.get(j).numberOfWords + " words" );
+		}
+	}
 	
 }
