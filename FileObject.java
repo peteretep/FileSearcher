@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 
-public class FileObject 
+public class FileObject implements Comparable<FileObject>
 {
 	String fileLocation;
 	String fileContents="";
-	int numberOfWords=0;
+	Integer numberOfWords=0;
 	public FileObject(String location) throws IOException
 	{
 		fileLocation=location;
@@ -37,6 +37,11 @@ public class FileObject
 		{
 			numberOfWords++;
 		}
+	}
+	
+	public int compareTo(FileObject other)
+	{
+		return numberOfWords.compareTo(other.numberOfWords);
 	}
 	
 	

@@ -1,10 +1,12 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class FileSearcher 
 {
-	ArrayList <String> words;  		// list of words to search for
+	// list of words to search for
+	ArrayList <String> words=new ArrayList<String>();  		
 	ArrayList <FileObject> files;	// list of FileObjects
 
 	public FileSearcher() throws IOException		// Constructor for filesearcher - puts files into it
@@ -14,23 +16,27 @@ public class FileSearcher
 		files.add(file);
 		file=new FileObject("file2.txt");
 		files.add(file);
+		file=new FileObject("file3.txt");
+		files.add(file);
 	}
 	
 	
-	private void addWords() 						// Adds words to the words arrayList
+	private void addWords(String word) 						// Adds words to the words arrayList
 	{
-		words=new ArrayList<String>();
-		words.add("thanks");
-		words.add("you");
-		words.add("Im");
-		words.add("how");
+		words.add(word);
 	}
 
 	public static void main(String[] args) throws IOException 
 	{
 		FileSearcher fileSearch1=new FileSearcher();	// Initialises new FileSearcher
 		
-		fileSearch1.addWords();							// Runs the add words method
+		for(String word: args)
+		{
+			
+			// Runs the add words method
+			fileSearch1.addWords(word);
+		}	
+			
 		for (int j=0;j<fileSearch1.files.size();j++)	// calls the checkIfWordIsInFiles method for each file
 		{
 			fileSearch1.checkIfWordIsInFiles(j);
@@ -55,12 +61,10 @@ public class FileSearcher
 
 	private void sortFileObjects()
 	{
-		if(files.get(0).numberOfWords < files.get(1).numberOfWords)
-		{	
-			FileObject spare=files.get(0);
-			files.set(0, files.get(1));
-			files.set(1, spare);
-		}
+		// modified mergesort O(nlog(n))
+		Collections.sort(files);  
+		// reverse runs in linear time
+		Collections.reverse(files);
 	}
 	
 	private void printResults()
